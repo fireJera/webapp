@@ -1,4 +1,4 @@
-var vm = new Vuew({
+var vm = new Vue({
     el: '#app',
     data: {
         tasks:[
@@ -7,3 +7,25 @@ var vm = new Vuew({
         ]
     }
 })
+
+
+
+// var vm = new Vue({
+//     el: '#app',
+//     data: {
+//         tasks:[
+//             "first sleep early",
+//             "second wake early"
+//         ]
+//     }
+// })
+
+// new Vue({
+//     el: '#app',
+//     data: {
+//         tasks: [
+//             "first sleep early",
+//             "second wake early"
+//         ]
+//     }
+// })
