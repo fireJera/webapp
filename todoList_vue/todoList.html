@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoList</title>
+    <script src="Vue.js"></script>
+    <style>
+        body {
+            /*距离左边的距离，不过10和30好像没什么区别*/
+            margin: 0;
+            min-width: 300;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .header {
+            background-color: #f44336;
+            padding: 30px 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .header:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        input {
+            width: 75%;
+            border: none;
+            padding: 10px;
+            float: left;
+            font-size: 16px;
+        }
+
+        .addBtn {
+            border: none;
+            background: #d9d9d9;
+            width: 25%;
+            padding: 8px;
+            color: #555;
+            float: left;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /*鼠标移动上去的状态*/
+        .addBtn:hover {
+            background-color: #bbb;
+        }
+
+        .removeBtn {
+            position: absolute;
+            background: #f44336;
+            color: white;
+            border: none;
+            text-align: center;
+            font-size: 18px;
+            right: 0;
+            top: 0;
+            padding: 12px 16px 12px 16px;
+            width: 40px;
+        }
+
+        .removeBtn:hover {
+            background: white;
+            color: black;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul li {
+            /* 鼠标移到上面时的光标  pointer是小手 */
+            cursor: pointer;
+            position: relative;
+            /* 距离上下左右的位置 */
+            padding: 12px 8px 12px 40px;
+            background: #eee;
+            font-size: 18px;
+            transition: 0.2s;
+
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* odd 奇 even 偶 */
+        ul li:nth-child(odd) {
+            background: #f9f9f9;
+        }
+
+        ul li:hover {
+            background: #ddd;
+        }
+
+        ul li:checked {
+            background: #888;
+            color: #fff;
+            text-decoration: line-through˙;
+        }
+    </style>
+</head>
+
+<body id="app">
+    <div id="headeDIV" class="header">
+        <h2 style="margin: 5px">To Do Lists</h2>
+        <input type="text" id=taskinput placeholder="please input task" v-model="inputText"
+            @change="specifiName($event)">
+        <button id="addBtn" class="addBtn" v-on:click="addList()">添加</button>
+    </div>
+
+    <div id="dolistDiv">
+        <ul id="todoul">
+            <li v-for='(listItem, index) of todoLists' :key=index :content=listItem
+                v-on:mouseenter="listMouseOver(index)" v-on:mouseleave="listMouseLeave(index)">
+                {{ listItem.name }}
+                <!-- <span v-if=listItem.showDel>
+                    <button class="removeBtn" v-on:click="removeList(index)">
+                        x
+                    </button>
+                </span> -->
+            </li>
+        </ul>
+    </div>
+
+
+    <script>
+        export default {
+            data() {
+                return {
+                    inputText: '',
+                    todoLists: [
+                        { name: "first task", showDel: false },
+                        { name: "second task", showDel: false },
+                    ],
+                }
+            },
+
+            methods: {
+                addList: function () {
+                    if (inputText === '') {
+                        alert("text cannot be null");
+                    }
+                    else {
+                        let listItem = { name: inputText, showDel: false };
+                        vm.todoLists.push(listItem);
+                        this.inputText = '';
+                    }
+                    console.log("addList end")
+                },
+                specifiName(e) {
+                    var that = this;
+                    var val = e.target.value;
+                    inputText = val
+                },
+
+                listMouseOver(index) {
+                    console.log(index);
+                    todoLists[0].showDel = true;
+                    console.log("listMouseOver");
+                },
+
+                listMouseLeave(index) {
+                    // todoLists[0].showDel = false;
+                    console.log("listMouseLeave");
+                },
+
+                removeList(index) {
+                    todoLists.splice(index, 1);
+                },
+            }
+        },
+
+    </script>
+
+</body>
+
+</html>

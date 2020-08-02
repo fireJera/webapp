@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoList</title>
+    <style>
+        body {
+            /*距离左边的距离，不过10和30好像没什么区别*/
+            margin: 0;
+            min-width: 300;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .header {
+            background-color: #f44336;
+            padding: 30px 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .header:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        input {
+            width: 75%;
+            border: none;
+            padding: 10px;
+            float: left;
+            font-size: 16px;
+        }
+
+        .addBtn {
+            border: none;
+            background: #d9d9d9;
+            width: 25%;
+            padding: 8px;
+            color: #555;
+            float: left;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /*鼠标移动上去的状态*/
+        .addBtn:hover {
+            background-color: #bbb;
+        }
+
+        .removeBtn {
+            position: absolute;
+            background: #f44336;
+            color: white;
+            border: none;
+            text-align: center;
+            font-size: 18px;
+            right: 0;
+            top: 0;
+            padding: 12px 16px 12px 16px;
+            width: 40px;
+        }
+
+        .removeBtn:hover {
+            background: white;
+            color: black;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul li {
+            /* 鼠标移到上面时的光标  pointer是小手 */
+            cursor: pointer;
+            position: relative;
+            /* 距离上下左右的位置 */
+            padding: 12px 8px 12px 40px;
+            background: #eee;
+            font-size: 18px;
+            transition: 0.2s;
+
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* odd 奇 even 偶 */
+        ul li:nth-child(odd) {
+            background: #f9f9f9;
+        }
+
+        ul li:hover {
+            background: #ddd;
+        }
+
+        ul li:checked {
+            background: #888;
+            color: #fff;
+            text-decoration: line-through˙;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="headeDIV" class="header">
+        <h2 style="margin: 5px">To Do Lists</h2>
+        <input type="text" id=taskinput placeholder="please input task">
+        <button id="addBtn" class="addBtn">添加</button>
+    </div>
+    <!-- <ul>
+        <li>
+            <input type="checkbox" name="category" id="1">
+            <span>test1</span>
+        </li>
+        <li>
+            <input type="checkbox" name="category3" id="test3">
+            <span>test3</span>
+        </li>
+        <li>
+            <input type="checkbox" name="category4" id="test4">
+            <span>test4</span>
+        </li>
+        <li>
+            <input type="checkbox" name="category5" id="test5">
+            <span>test5</span>
+        </li>
+    </ul> -->
+    <script>
+        var todoLists = ["first task", "second task"];
+        var list = document.getElementById("list");
+        const removeBtn = document.createElement("input");
+        removeBtn.className = "removeBtn";
+        removeBtn.type = "button";
+        removeBtn.value = "x";
+        removeBtn.onclick = removeList;
+        let spanEle = document.createElement("SPAN");
+        spanEle.appendChild(removeBtn);
+
+        if (list === null) {
+            list = document.createElement("ul");
+            let body = document.getElementsByTagName("body")[0];
+            body.appendChild(list);
+        }
+
+        lists = list.getElementsByTagName("li");
+        document.getElementById("addBtn").addEventListener("click", addList);
+
+        loadExistsTask();
+
+        for (let index = 0; index < lists.length; index++) {
+            addEventToTarget(lists[index]);
+            //mouseout mouseover mouseenter mouseleave 前者在子节点中也会调用，后两个在子节点中不调用
+        }
+
+        function loadExistsTask() {
+            todoLists.forEach(name => {
+                let t = document.createTextNode(name);
+                let element = document.createElement("li");
+                element.append(t);
+                list.appendChild(element);
+            });
+        }
+
+        function listMouseOver(event) {
+            let target = event.currentTarget;
+            target.appendChild(spanEle);
+            console.log("list mouse over");
+        }
+
+        function listMouseLeave() {
+            let target = event.currentTarget;
+            target.removeChild(spanEle);
+            console.log("list mouse Leave");
+        }
+
+        function listDragStart() {
+            console.log("list drag start");
+        }
+
+        function listDragEnd() {
+            console.log("list drag end");
+        }
+
+        function addList() {
+            const inputArea = document.querySelector("input")
+            let inputText = inputArea.value;
+            let t = document.createTextNode(inputText);
+            let para = document.createElement("li");
+            addEventToTarget(para);
+            para.append(t);
+            if (inputText === '') {
+                alert("text cannot be null");
+            }
+            else {
+                list.appendChild(para);
+            }
+            todoLists.push(inputText);
+            inputArea.value = "";
+            console.log(inputText)
+        }
+
+        function removeList(event) {
+            console.log("removeList clicked")
+            // event = event || window.event;
+            // if (event.stopPropagation) {
+            //     event.stopPropagation();
+            // }
+            // else {
+            //     event.cancelBubble = true;
+            // }
+            let target = event.currentTarget;
+            let li = target.parentNode.parentNode
+            list.removeChild(li);
+            try {
+                fat.childNodes.forEach((node, index) => {
+                    if (node === currentTarget) {
+                        if (todoLists.length > 0) {
+                            todoLists.splice(index, 1);
+                            throw new Error("EndForEach");
+                        }
+                    }
+                }
+                )
+            }
+            catch (e) {
+                if (e.message != "EndForEach") throw e;
+            }
+        }
+
+        function addEventToTarget(target) {
+            target.addEventListener('mouseenter', listMouseOver);
+            target.addEventListener('mouseleave', listMouseLeave);
+            target.addEventListener('drag', listMouseLeave);
+            target.addEventListener('dragstart', listDragStart);
+            target.addEventListener('dragend', listDragEnd);
+        }
+    </script>
+
+</body>
+
+</html>
+
+<!-- {
+	"common": {
+		"desc": "成功",
+		"status": "0",
+		"reset": "21000",
+		"isDes": 2
+	},
+	"options": {
+		"bgImgUrl": "2020070823205274613.jpeg",
+		"num": 0,
+		"isShowLuckyBagV1": "1",
+		"fullServiceNewsRoomId": "172115171",
+		"showTxt": "枕边女友骗钱厅，防骗私聊我进入聊天室，欢迎",
+		"roomShowMsg2": "",
+		"chatRoomFixedActivityConfig": "{\"url\":\"https:\/\/webapp.ourydc.cn\/st\/activity\/ferrule\/index.html?userId=${userId}\",\"type\":\"1\",\"image\":\"banner\/tqrk_20200428.png\"}",
+		"roomShowMsg1": "",
+		"wheatSendGift": "1",
+		"chatRoomInfo": {
+			"isNormal": "1",
+			"roomRank": "3",
+			"roomId": 176149652,
+			"dressId": "",
+			"seatNum": 8,
+			"streamType": "1",
+			"allowCreateTeam": "1",
+			"roomType": "27",
+			"typeColor": "7857340",
+			"isIntroduce": "1",
+			"showGiftThreshold": 0,
+			"costList": "2",
+			"onLineUser": 12150,
+			"roomRtmpPullUrl": "rtmp:\/\/alive35.ourydc.cn\/ybb\/0002020051112075217000?auth_key=1595638948-0-0-fda3110cb70425536034801922c05ff8",
+			"isAdmin": false,
+			"anchorLevel": 3,
+			"roomName": "枕边女友\/全麦优质声甜",
+			"isAttention": "1",
+			"headDressImgUrl": "",
+			"roomIntroduce": "CgrkupLliqjop4TliJlnCgoxOueUs+ivty7kuIo46bqm5LiO5aWz56We5LqS5YqoCgoyOueCueWHu+W\/g+S7quWls+elnuWktOWDj+WPr+ebtOaOpeaJk+i1j+ekvOeJqQoK5LqS5YqoCgozOuS6kuWKqOWJjemcgOivoumXruWls+elngoKNDogOOm6puemgeatou+8jOS4iuWdkemXsuiBigoK5bmy5p2v54iG6Z+zKOS4gOS4quWjsOmfs+S4gOS4quaVheS6i+eahOW8gOWniykKCuWFqOm6pue6r+aDhSgzMDDpkrsp5Y+v5LqS5Yqo5bCP5ri45oiPCgrlj4zotLnlkITnuq\/mg4UoMzAwIOmSuykKCuazlei\/neazleWFqOm6puiCpeeagiAoOTAw6ZK7KemrmOerr+S6kuWKqOS4gOWIhumSnygKCi3liIbpkp\/nmoTkuobop6MpCgrlj4zotLnlkITogqXnmoIoOTAw6ZK7KQoK5o+QO+WMlumdnuS9oOiOq+WxniAoMjUwMOmSuykg5LqS5YqoM+WIhumSnygz5YiGCgrpkp\/nmoTlv4PliqgpCgrlj4zotLnlkITogqXnmoIoOTAw6ZK7KQoK5Lul5q2k57G75o6oCgot5YiG6ZKf5YWo6bqm5LqS5YqoOTAw6ZK76LW3KOWPjOi0uTkwMAoK6ZK7KQoK57q\/LuS4iuaBi+S6ujF2MeS7t+agvOaYjue7hgoK6ZW\/6ZW\/5LmF5LmFMeWwj+aXtgoK5Y+M6LS55ZCE5LuZ5aWz5qOSCgrlpKnnsYHkuYvpn7Mz5bCP5pe2Cgrlj4zotLnlkITnsonnuqLlsJHlpbPmoqY=",
+			"expressionStatus": "0",
+			"roomState": "1",
+			"introduceShowType": "1",
+			"liveType": 1,
+			"typeName": "女神",
+			"videoLiveNum": 0,
+			"yylGameBtnShow": "2",
+			"redbagReceiveBtnShow": "1",
+			"managerNickName": "接视频\/857\/语音\/陪玩",
+			"roomHlsPullUrl": "http:\/\/alive35.ourydc.cn\/ybb\/0002020051112075217000.m3u8?auth_key=1595638948-0-0-699aa3bdcbf8d0d5965f93b9aaa61524",
+			"chatRoomBgImg": "{\"backgroundImg\":\"chatRoom\/bg_img\/chatroom_2_bg@2x.png\"}",
+			"managerHeadImg": "2020063013171445000.jpeg",
+			"roomHttpPullUrl": "http:\/\/alive35.ourydc.cn\/ybb\/0002020051112075217000.flv?auth_key=1595638948-0-0-09734ae5b3f7c9db238ac32593bef3a0",
+			"iosMoyinRoomJson": "{\"isFull\":\"2\",\"title\":\"幸运福袋\",\"type\":\"21\",\"style\":\"1\",\"url\":\"https:\/\/webapp.ourydc.cn\/st\/activity\/luckyBagNew2\/index_20190829.html?userId=${userId}\",\"urlNew\":\"https:\/\/webapp.ourydc.cn\/st\/activity\/luckyBagNew2\/index_20190829.html?userId=${userId}&roomId=${roomId}\"}",
+			"roomPwd": null,
+			"idNoLevel": 1,
+			"channelId": "b3b3efcb9d1b4466a11c8d8c847ebcc0",
+			"showLuckyRain": "0",
+			"updateTime": 1595522410000,
+			"roomAnnouncement": "欢迎来到我的温馨小窝，偶然的相遇也许就是一个美好的开始～ \n提示您:直播中请您注意个人言行，平台禁止出现违法违规，色情低俗等行为，管理员24小时巡查并接受举报，感谢您与平台共同维护我们良好的娱乐环境。 \n提示您:直播中请您注意个人言行，平台禁止出现违法违规，色情低俗等行为，管理员24小时巡查并接受举报，感谢您与平台共同维护我们良好的娱乐环境。 \n提示您:直播中请您注意个人言行，平台禁止出现违法违规 \n提示您:直播中请您注意个人言行，平台禁止出现违法违规，色情低俗等行为，管理员24小时巡查并接受举报，感谢您与平台共同维护我们良好的娱乐环境。 \n提示您:直播中请您注意个人言行，平台禁止出现违法违规，色情低俗等行为，管理员24小时巡查并接受举报，感谢您与平台共同维护我们良好的娱乐环境。",
+			"roomManager": "0002020051112075217000",
+			"gameBtnShow": "2",
+			"showDanmu": "0",
+			"managerUserId": "0002020051112075217000",
+			"managerIdentityId": "36424373",
+			"identityId": "1131207",
+			"roomExt": "http:\/\/web.ourydc.cn\/agreement\/playroom",
+			"typeImage": "chatRoom\/config_type_img\/27.png",
+			"allRewardShow": "1",
+			"redBagBtnShow": "1"
+		},
+		"chatRoomInvitationFriendConfig": "{\"inviteMaxSize\":10,\"welcomeTime\":60000,\"welcomeTxt\":\"和大家打个招呼吧\",\"applyMicTime\":120000,\"applyMicTxt\":\"呆了这么久上麦玩一会吧\",\"followTime\":300000,\"followTxt\":\"关注聊天室，从此不迷路\"}",
+		"newGiftTime": "0",
+		"realShowTxt": "枕边女友骗钱厅，防骗私聊我进入聊天室，欢迎",
+		"roomType": "27",
+		"rebuild": "1",
+		"outerGift": {
+			"isOne": "2",
+			"image": "giftImage\/gift\/1_160_1.png",
+			"appVersion": "all",
+			"isPay": "all",
+			"isMoney": "1",
+			"giftId": "1_160_1",
+			"isRandom": "1",
+			"seatNum": null,
+			"price": 200,
+			"name": "幸运彩蛋",
+			"startTime": {
+				"date": 23,
+				"hours": 11,
+				"seconds": 57,
+				"month": 6,
+				"nanos": 0,
+				"timezoneOffset": -480,
+				"year": 120,
+				"minutes": 14,
+				"time": 1595474097000,
+				"day": 4
+			},
+			"id": "98b6bd70a18911ea99ec6c92bf28f5a9",
+			"endTime": {
+				"date": 5,
+				"hours": 14,
+				"seconds": 0,
+				"month": 3,
+				"nanos": 0,
+				"timezoneOffset": -480,
+				"year": 130,
+				"minutes": 0,
+				"time": 1901599200000,
+				"day": 5
+			},
+			"channelId": "all",
+			"roomType": "all",
+			"wallName": "幸运彩蛋v1"
+		},
+		"propList": [{
+			"propNum": 3,
+			"image": "backpack\/prop\/barrage_normal.png",
+			"expireTime": 1595781171000,
+			"price": 300,
+			"propId": "104_10_2",
+			"amId": "7d13c7f4c9dd11ea8fdc7cd30aeb41aa",
+			"isMoney": "1",
+			"propType": 401,
+			"isExpire": "1",
+			"propName": "普通弹幕"
+		}, {
+			"propNum": 3,
+			"image": "backpack\/prop\/barrage_normal.png",
+			"expireTime": 1595987997000,
+			"price": 300,
+			"propId": "104_10_2",
+			"amId": "286f15e9bf8447a6b21e4ea6ef5eb534",
+			"isMoney": "1",
+			"propType": 401,
+			"isExpire": "1",
+			"propName": "普通弹幕"
+		}],
+		"adminServerNowTime": 1595522695580,
+		"chatRoomSendLotteryTicket": "{\"welcomeTxt\":\"每日累计观看直播60秒，即可免费获得金币抽奖券1张\",\"rewardTxt\":\"恭喜获得金币抽奖券1张，点击抽个奖>\",\"rewardType\":\"1\",\"propId\":\"\",\"lotteryUrl\":\"https:\/\/webapp.ourydc.cn\/st\/activity\/goldLottery\/index_app.html?userId=${userId}\",\"rewardBtn\":\"去抽奖\",\"rewardTime\":60000}",
+		"myShowTxt": "我（枕边女友骗钱厅，防骗私聊我)进入聊天室，欢迎",
+		"isCostUser": "1",
+		"songType": "2",
+		"chatRoomOpenTime": 1595518191014,
+		"isNewUser": "2",
+		"chatRoomTaskGiftStatus": "1",
+		"isBlack": "2",
+		"inChatRoomMsg": "{\"firstPage\":\"1\",\"dynamic\":\"1\",\"appList\":\"1\",\"nearby\":\"1\",\"profile\":\"1\"}",
+		"chatRoomTaskMsg": "在线时间越久，可以领取的奖励越多",
+		"config": "{\"showGiftThreshold\":\"0\",\"showDanmu\":\"1\",\"expressionStatus\":\"1\",\"showLuckyRain\":\"1\"}",
+		"isShowLuckyBag": "2",
+		"charRommTaskList": [{
+			"ext": "101_2_7",
+			"timeLimit": "180",
+			"giftIcon": "giftImage\/gift\/2_2_2.png",
+			"roomTaskId": "1001001",
+			"giftName": "甜蜜小花",
+			"giftNum": "1",
+			"giftType": "2",
+			"rewardStatus": "0"
+		}, {
+			"ext": "101_2_7",
+			"timeLimit": "300",
+			"giftIcon": "giftImage\/gift\/2_2_2.png",
+			"roomTaskId": "1001002",
+			"giftName": "甜蜜小花",
+			"giftNum": "2",
+			"giftType": "2",
+			"rewardStatus": "0"
+		}, {
+			"ext": "101_10_6",
+			"timeLimit": "600",
+			"giftIcon": "giftImage\/gift\/2_10_1.png",
+			"roomTaskId": "1001003",
+			"giftName": "千纸鹤",
+			"giftNum": "1",
+			"giftType": "2",
+			"rewardStatus": "0"
+		}, {
+			"ext": "101_10_6",
+			"timeLimit": "600",
+			"giftIcon": "giftImage\/gift\/2_10_1.png",
+			"roomTaskId": "1001004",
+			"giftName": "千纸鹤",
+			"giftNum": "2",
+			"giftType": "2",
+			"rewardStatus": "0"
+		}, {
+			"ext": "101_20_2",
+			"timeLimit": "900",
+			"giftIcon": "giftImage\/gift\/2_20_1.png",
+			"roomTaskId": "1001005",
+			"giftName": "放松一下",
+			"giftNum": "1",
+			"giftType": "2",
+			"rewardStatus": "0"
+		}, {
+			"ext": "101_200_2",
+			"timeLimit": "900",
+			"giftIcon": "giftImage\/gift\/2_200_1.png",
+			"roomTaskId": "1001006",
+			"giftName": "冬之恋语",
+			"giftNum": "1",
+			"giftType": "2",
+			"rewardStatus": "0"
+		}],
+		"seeOnline": "1",
+		"luckyBagRoomId": "63376311"
+	}
+} -->
