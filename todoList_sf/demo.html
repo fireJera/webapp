@@ -13,6 +13,7 @@
         }
 
         * {
+            /* 两个框并排显示 */
             box-sizing: border-box;
         }
 
@@ -22,10 +23,12 @@
             color: white;
             text-align: center;
         }
-
+        /* header后面的所有元素 */
         .header:after {
             content: "";
+            /* 两个元素之间的框的类型，与块级元素内联元素有点类似 */
             display: table;
+            /* 左右两侧均不允许浮动元素 */
             clear: both;
         }
 
@@ -33,6 +36,7 @@
             width: 75%;
             border: none;
             padding: 10px;
+            /* float 浮动 */
             float: left;
             font-size: 16px;
         }
@@ -46,6 +50,7 @@
             float: left;
             text-align: center;
             font-size: 16px;
+            /* 光标类型 */
             cursor: pointer;
             transition: 0.3s;
         }
@@ -88,8 +93,11 @@
             font-size: 18px;
             transition: 0.2s;
 
+            /* safari */
             -webkit-user-select: none;
+            /* firefox */
             -moz-user-select: none;
+            /* 用户将无法在该文本块中开始选择文本 */
             -ms-user-select: none;
             user-select: none;
         }
@@ -166,6 +174,7 @@
             todoLists.forEach(name => {
                 let t = document.createTextNode(name);
                 let element = document.createElement("li");
+                element.draggable = true;
                 element.append(t);
                 list.appendChild(element);
             });
@@ -211,13 +220,6 @@
 
         function removeList(event) {
             console.log("removeList clicked")
-            // event = event || window.event;
-            // if (event.stopPropagation) {
-            //     event.stopPropagation();
-            // }
-            // else {
-            //     event.cancelBubble = true;
-            // }
             let target = event.currentTarget;
             let li = target.parentNode.parentNode
             list.removeChild(li);
