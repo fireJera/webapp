@@ -1,42 +1,197 @@
 <template>
   <div id="app">
     <div id="header" class="headerDiv">
-        <input type="text" class="taskInput">
-        <input type="submit" value="添加" class="taskSubmit">
+      <h1>todoList</h1>
+      <input
+        id="taskInput"
+        type="text"
+        class="taskInput"
+        v-model="inputText"
+        @keydown.enter="intputEnterDown()"
+      />
+      <input type="submit" value="添加" class="taskSubmit" @click="submitTask()" />
     </div>
-    <div>
+    <div class="listul">
+      <h2>未完成</h2>
       <ul>
-
+        <li
+          v-for="(listItem, index) of todoList"
+          :key="index"
+          :content="listItem"
+          v-on:mouseenter="listMouseOver(true, index)"
+          @mouseleave="listMouseLeave(true, index)"
+        >
+          <input type="checkbox" value="index" @change="todoChecked(index)" />
+          {{ listItem.taskName }}
+          <span v-show="listItem.isMoveOn">
+            <input type="submit" value="x" class="removeInput" @click="removeToDoTask(index)" />
+          </span>
+        </li>
+      </ul>
+      <h2>已完成</h2>
+      <ul>
+        <li
+          v-for="(listItem, index) in finishList"
+          :key="index"
+          :content="listItem"
+          v-on:mouseenter="listMouseOver(false, index)"
+          @mouseleave="listMouseLeave(false, index)"
+        >
+          <input type="checkbox" value="index" checked @change="finishedUnChecked(index)" />
+          {{ listItem.taskName }}
+          <span v-show="listItem.isMoveOn">
+            <input type="submit" value="x" class="removeInput" @click="removeToDoTask(index)" />
+          </span>
+        </li>
       </ul>
     </div>
-    <!-- <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul> -->
   </div>
 </template>
 
 <script>
+import * as Utils from "./utils/utils";
+import ajax from './ajax/customAjax'
+
 export default {
-  name: 'app',
-  data () {
+  name: "app",
+  data() {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      inputText: "",
+      todoList: [],
+      finishList: [],
+    };
+  },
+
+  watch: {
+    todoList:function() {
+      this.saveTodoToLocal();
+    },
+    finishList:function() {
+      this.saveFinishToLocal();
     }
-  }
-}
+    // todoList: {
+    //   handler: function () {
+    //     this.saveTodoToLocal();
+    //   },
+    //   deep: true
+    // },
+    // finishList: {
+    //   handler: function () {
+    //     this.saveFinishToLocal();
+    //   },
+    //   deep: true
+    // },
+  },
+
+  methods: {
+    getData() {
+      console.log("getData")
+      var that = this
+      ajax({
+        methods: 'GET',
+        url: '/todolist',
+        data: {},
+        success: function(res) {
+
+        },
+        faile: function(res) {
+
+        }
+      })
+    },
+
+    pushData(name) {
+      console.log("pushData")
+      var that = this
+      ajax({
+        methods: 'POST',
+        url: '/todolist',
+        data: {},
+        success: function(res) {
+
+        },
+        faile: function(res) {
+
+        }
+      })
+    },
+
+    listMouseOver(isTodo, index) {
+      if (isTodo) {
+        this.todoList[index].isMoveOn = true;
+      } else {
+        this.finishList[index].isMoveOn = true;
+      }
+    },
+
+    listMouseLeave(isTodo, index) {
+      if (isTodo) {
+        this.todoList[index].isMoveOn = false;
+      } else {
+        this.finishList[index].isMoveOn = false;
+      }
+    },
+
+    intputEnterDown(e) {
+      this.submitTask();
+    },
+
+    submitTask() {
+      console.log("submitTask")
+      if (this.inputText === "") {
+        alert("please input text");
+      } else {
+        let listItem = { taskName: this.inputText, isMoveOn: false };
+        this.todoList.push(listItem);
+        this.pushData(inputText);
+        this.inputText = "";
+      }
+    },
+
+    todoChecked(index) {
+      let temp = this.todoList[index];
+      this.todoList.splice(index, 1);
+      this.finishList.push(temp);
+    },
+
+    finishedUnChecked(index) {
+      let temp = this.finishList[index];
+      this.finishList.splice(index, 1);
+      this.todoList.push(temp);
+    },
+
+    removeToDoTask(index) {
+      this.todoList.splice(index, 1);
+    },
+
+    removeFinishTask() {
+      this.finishList.splice(index, 1);
+    },
+
+    saveTodoToLocal() {
+      Utils.setItem("todoList", this.todoList);
+    },
+
+    saveFinishToLocal() {
+      Utils.setItem("finishList", this.finishList);
+    },
+
+    readFromLocal() {
+      this.getData();
+      let todos = Utils.getItem("todoList");
+      let finishs = Utils.getItem("finishList");
+      if (todos) {
+        this.todoList = todos;
+      }
+      if (finishs) {
+        this.finishList = finishs;
+      }
+    },
+  },
+  mounted() {
+    this.readFromLocal();
+  },
+};
 </script>
 
 <style>
@@ -104,8 +259,15 @@ ul {
 }
 
 li {
-  display: inline-block;
   margin: 0 10px;
 }
 
+.removeInput {
+  position: absolute;
+  background: red;
+  font-size: 20px;
+  cursor: pointer;
+  width: 40px;
+  text-align: center;
+}
 </style>
